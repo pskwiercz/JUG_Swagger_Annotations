@@ -53,8 +53,8 @@ public class BookController {
         book.setTitle(bookDetails.getTitle());
         book.setPages(bookDetails.getPages());
         book.setDiscount(bookDetails.isDiscount());
-        final Book updatedEmployee = bookRepository.save(book);
-        return ResponseEntity.ok(updatedEmployee);
+        final Book updatedBook = bookRepository.save(book);
+        return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping("/book/{id}")
