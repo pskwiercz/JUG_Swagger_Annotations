@@ -8,6 +8,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+/**
+ * Load example data to DB before start application
+ */
+
 @Component
 @Log4j2
 public class DataLoader implements ApplicationRunner {
@@ -20,9 +24,9 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) {
-        bookRepository.save(new Book("Sam Newman", "Building Microservices", 300, false));
-        bookRepository.save(new Book("Robert Martin", "Clean Code", 400, true));
-        bookRepository.save(new Book("Robert Martin", "Clean Architecture", 433, true));
+        bookRepository.save(new Book(1, "Sam Newman", "Building Microservices", 300, false));
+        bookRepository.save(new Book(2,"Robert Martin", "Clean Code", 400, true));
+        bookRepository.save(new Book(3, "Robert Martin", "Clean Architecture", 433, true));
 
         bookRepository.findAll().forEach(x -> log.info(x.toString()));
     }

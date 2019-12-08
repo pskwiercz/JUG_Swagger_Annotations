@@ -41,6 +41,7 @@ public class BookController {
 
     @PostMapping("/book")
     public Book createBook(@Valid @RequestBody Book book) {
+        // Add defensive check to prevent override existing book in DB
         return bookRepository.save(book);
     }
 
@@ -49,6 +50,7 @@ public class BookController {
                                            @Valid @RequestBody Book bookDetails) throws EntityNotFoundException {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found for this id :: " + bookId));
+        book.setId(bookId);
         book.setAuthor(bookDetails.getAuthor());
         book.setTitle(bookDetails.getTitle());
         book.setPages(bookDetails.getPages());

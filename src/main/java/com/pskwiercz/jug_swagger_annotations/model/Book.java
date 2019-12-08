@@ -1,32 +1,30 @@
 package com.pskwiercz.jug_swagger_annotations.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+@ApiModel(description = "All details about the book.")
 public class Book {
 
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        @ApiModelProperty(value = "Book ID", required = true, position = 1)
         private long id;
 
+        @ApiModelProperty(value = "Author of the book", example="John Dole", position = 2)
         private String author;
 
+        @ApiModelProperty(value = "Title of the book", position = 3)
         private String title;
 
+        @ApiModelProperty(value = "Number of pages", position = 4)
         private int pages;
 
+        @ApiModelProperty(value = "Discount availability", position = 5)
         private boolean discount;
-
-    public Book(String author, String title, int pages, boolean discount) {
-        this.author = author;
-        this.title = title;
-        this.pages = pages;
-        this.discount = discount;
-    }
 }
