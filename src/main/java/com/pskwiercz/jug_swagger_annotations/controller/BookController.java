@@ -1,72 +1,55 @@
 package com.pskwiercz.jug_swagger_annotations.controller;
 
+import com.pskwiercz.jug_swagger_annotations.model.Book;
+import io.swagger.annotations.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
-import com.pskwiercz.jug_swagger_annotations.model.Book;
-import com.pskwiercz.jug_swagger_annotations.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+@Api(value = "Book Rest API", description = "Operations on books via Rest API")
+public interface BookController {
 
-@RestController
-@RequestMapping("/api")
-public class BookController {
-
-    @Autowired
-    private BookRepository bookRepository;
-
+    @ApiOperation(value = "View a list of available books", produces = "application/json", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     @GetMapping("/book")
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
-    }
+    List<Book> getAllBooks();
 
+    @ApiOperation(value = "Get book by Id", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved book"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 500, message = "Book not found")
+    })
     @GetMapping("/book/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable(value = "id") Long bookId) throws EntityNotFoundException {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found for this id :: " + bookId));
-        return ResponseEntity.ok().body(book);
-    }
+    ResponseEntity<Book> getBookById(
+            @ApiParam(value = "Book id from which book object will retrieve", required = true) @PathVariable(value = "id") Long bookId)
+            throws EntityNotFoundException;
 
+    @ApiOperation(value = "Add book", produces = "application/json")
     @PostMapping("/book")
-    public Book createBook(@Valid @RequestBody Book book) {
-        // Add defensive check to prevent override existing book in DB
-        return bookRepository.save(book);
-    }
+    Book createBook(
+            @ApiParam(value = "Book object store in database", required = true) @Valid @RequestBody Book book);
 
+    @ApiOperation(value = "Update book", produces = "application/json")
     @PutMapping("/book/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable(value = "id") Long bookId,
-                                           @Valid @RequestBody Book bookDetails) throws EntityNotFoundException {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found for this id :: " + bookId));
-        book.setId(bookId);
-        book.setAuthor(bookDetails.getAuthor());
-        book.setTitle(bookDetails.getTitle());
-        book.setPages(bookDetails.getPages());
-        book.setDiscount(bookDetails.isDiscount());
-        final Book updatedBook = bookRepository.save(book);
-        return ResponseEntity.ok(updatedBook);
-    }
+    ResponseEntity<Book> updateBook(
+            @ApiParam(value = "Book Id to update book object", required = true) @PathVariable(value = "id") Long bookId,
+            @ApiParam(value = "Updated book object", required = true) @Valid @RequestBody Book bookDetails)
+            throws EntityNotFoundException;
 
+    @ApiOperation(value = "Delete book", produces = "application/json", response = Map.class)
     @DeleteMapping("/book/{id}")
-    public Map<String, Boolean> deleteBook(@PathVariable(value = "id") Long bookId)
-            throws EntityNotFoundException {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found for this id :: " + bookId));
-        bookRepository.delete(book);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
-    }
+    Map<String, Boolean> deleteBook(
+            @ApiParam(value = "Book Id from which book will be deleted ", required = true) @PathVariable(value = "id") Long bookId)
+            throws EntityNotFoundException;
 }
