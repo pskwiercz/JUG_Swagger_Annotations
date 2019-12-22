@@ -40,13 +40,6 @@ public interface BookController {
     Book createBook(
             @ApiParam(value = "Book object store in database", required = true) @Valid @RequestBody Book book);
 
-    @ApiOperation(value = "Update book", produces = "application/json")
-    @PutMapping("/book/{id}")
-    ResponseEntity<Book> updateBook(
-            @ApiParam(value = "Book Id to update book object", required = true) @PathVariable(value = "id") Long bookId,
-            @ApiParam(value = "Updated book object", required = true) @Valid @RequestBody Book bookDetails)
-            throws EntityNotFoundException;
-
     @ApiOperation(value = "Delete book", produces = "application/json", response = Map.class)
     @DeleteMapping("/book/{id}")
     Map<String, Boolean> deleteBook(
